@@ -6,9 +6,9 @@
 package core;
 
 import annotations.Injectable;
+import core.exceptions.ClassNotInjectable;
 import core.exceptions.InterfaceNotImplemented;
 import core.exceptions.UnresolvableDependency;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -32,12 +32,16 @@ public class Injector implements InjectorInterface {
     }
 
     @Override
-    public Injector addDependency(Class c, Class o) throws InterfaceNotImplemented {
-        boolean classImplementsInterface = Arrays.asList(o.getInterfaces()).stream().filter(p -> p.getName().equals(c.getName())).findAny().orElse(null) != null;
+    public Injector addDependency(Class interfaceClass, Class implementationClass) throws InterfaceNotImplemented, ClassNotInjectable {
+        boolean classImplementsInterface = Arrays.asList(implementationClass.getInterfaces()).stream().filter(p -> p.getName().equals(interfaceClass.getName())).findAny().orElse(null) != null;
+        boolean classIsInjectable = isInjectable(implementationClass);
         if (!classImplementsInterface) {
-            throw new InterfaceNotImplemented(String.format("%s doesn't implement interface %s", o.getName(), c.getName()));
+            throw new InterfaceNotImplemented(String.format("%s doesn't implement interface %s", implementationClass.getName(), interfaceClass.getName()));
         }
-        skeletonPool.put(c, o);
+        if (!classIsInjectable){
+            throw new ClassNotInjectable(String.format("%s Is not injectable", implementationClass.getName()));
+        }
+        skeletonPool.put(interfaceClass, implementationClass);
         return this;
     }
 
@@ -104,6 +108,11 @@ public class Injector implements InjectorInterface {
         return (T) constructor.newInstance(parameters);
     }
 
+    private boolean isInjectable(Class c){
+        Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
+        return injectableAnnotation != null;
+    }
+    
     private boolean requiresNewInstance(Class c) {
         Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
         return injectableAnnotation != null ? injectableAnnotation.ResolveWithNewInstance() : false;

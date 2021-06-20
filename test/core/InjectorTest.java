@@ -5,6 +5,8 @@
  */
 package core;
 
+import annotations.Injectable;
+import core.exceptions.ClassNotInjectable;
 import core.exceptions.InterfaceNotImplemented;
 import core.exceptions.UnresolvableDependency;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +34,7 @@ public class InjectorTest {
         injector = new Injector(skeletonPoolMock, objectPoolMock);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Injector test classes">
     public interface Dependency1Interface {
 
         void show();
@@ -46,6 +49,15 @@ public class InjectorTest {
 
     }
 
+    public interface UninjectableInterface{
+        
+    }
+    
+    public interface Dependency4Interface{
+        
+    }
+    
+    @Injectable
     public static class Dependency1 implements Dependency1Interface {
 
         public Dependency1() {
@@ -57,6 +69,7 @@ public class InjectorTest {
         }
     }
 
+    @Injectable
     public static class Dependency2 implements Dependency2Interface {
 
         public Dependency2() {
@@ -69,6 +82,7 @@ public class InjectorTest {
         }
     }
 
+    @Injectable
     public static class Dependency3 implements Dependency3Interface {
 
         private final Dependency1 dep1;
@@ -79,7 +93,19 @@ public class InjectorTest {
             this.dep2 = dep2;
         }
     }
-
+    
+    public static class Uninjectable implements UninjectableInterface{
+        
+    }
+    
+    @Injectable(ResolveWithNewInstance = true)
+    public static class Dependency4 implements Dependency4Interface{
+        
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Injector addDependency">
     /**
      * Test of addDependency method, of class Injector.
      *
@@ -88,65 +114,81 @@ public class InjectorTest {
     @Test
     public void testInjectorAddDependency_Success() throws Exception {
         Injector result = injector.addDependency(Dependency1Interface.class, Dependency1.class);
-
+        
         Mockito.verify(skeletonPoolMock, Mockito.times(1)).put(Dependency1Interface.class, Dependency1.class);
         assertEquals(injector, result);
     }
-
+    
     /**
      *
+     * @throws core.exceptions.ClassNotInjectable
      */
     @Test
-    public void testInjectorAddDependency_WhenClassDoesntImplementInterface_ThenExceptionThrown() {
+    public void testInjectorAddDependency_WhenClassDoesntImplementInterface_ThenExceptionThrown() throws ClassNotInjectable {
         Class c = Dependency1Interface.class;
         Class o = Dependency2.class;
-
+        
         try {
             injector.addDependency(c, o);
             fail(ExceptionShouldHaveBeenThrownMessage);
         } catch (InterfaceNotImplemented ex) {
         }
     }
-
+    
+    @Test
+    public void testInjectorAddDependency_WhenClassIsntInjectable_ThenExceptionThrown() throws InterfaceNotImplemented{
+        Class c = UninjectableInterface.class;
+        Class o = Uninjectable.class;
+        
+        try {
+            injector.addDependency(c, o);
+            fail(ExceptionShouldHaveBeenThrownMessage);
+        } catch (ClassNotInjectable ex) {
+        }
+    }
+//</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Injector initialise">
     /**
      * Test of initialise method, of class Injector.
+     * @throws java.lang.Exception
      */
     @Test
     public void testInjectorInitialise_Success() throws Exception {
         Class i1 = Dependency1Interface.class;
         Class c1 = Dependency1.class;
-
+        
         Class i2 = Dependency2Interface.class;
         Class c2 = Dependency2.class;
-
+        
         Map<Class, Class> skeleton = new HashMap<Class, Class>() {
             {
                 put(i1, c1);
                 put(i2, c2);
             }
         };
-
+        
         Injector instance = new Injector(skeleton, objectPoolMock);
-
+        
         instance.initialise();
-
+        
         Mockito.verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency1Interface.class), Mockito.any(Dependency1.class));
         Mockito.verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency2Interface.class), Mockito.any(Dependency2.class));
     }
-
+    
     @Test
     public void testInjectorInitialise_WhenDependencyCouldntBeResolved_ThenExceptionThrown() {
         Class i3 = Dependency3Interface.class;
         Class c3 = Dependency3.class;
-
+        
         Map<Class, Class> skeleton = new HashMap<Class, Class>() {
             {
                 put(i3, c3);
             }
         };
-
+        
         Injector instance = new Injector(skeleton, objectPoolMock);
-
+        
         try {
             instance.initialise();
             fail(ExceptionShouldHaveBeenThrownMessage);
@@ -154,9 +196,12 @@ public class InjectorTest {
             assertEquals(UnresolvableDependency.class, ex.getClass());
         }
     }
+//</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Injector resolveDependencies">
     /**
      * Test of resolveDependencies method, of class Injector.
+     * @throws java.lang.Exception
      */
     @Test
     public void testInjectorResolveDependencies_Success() throws Exception {
@@ -164,7 +209,7 @@ public class InjectorTest {
         assertNotEquals(null, classInstance);
         assertEquals(Dependency1.class, Dependency1.class);
     }
-
+    
     @Test
     public void testInjectorResolveDependencies_WhenUnresolvableDependency_ThenExceptionThrown() {
         try {
@@ -174,4 +219,5 @@ public class InjectorTest {
             assertEquals(UnresolvableDependency.class, ex.getClass());
         }
     }
+//</editor-fold>
 }

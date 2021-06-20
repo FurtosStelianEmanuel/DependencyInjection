@@ -5,6 +5,7 @@
  */
 package client;
 
+import annotations.Injectable;
 import interfaces.Interfaces;
 import interfaces.Interfaces.Dependency2Interface;
 
@@ -12,6 +13,7 @@ import interfaces.Interfaces.Dependency2Interface;
  *
  * @author Manel
  */
+@Injectable
 public class Dependency2 implements Dependency2Interface{
 
     private final Interfaces.Dependency1Interface dep1;

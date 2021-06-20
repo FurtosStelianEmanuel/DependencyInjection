@@ -5,6 +5,7 @@
  */
 package core;
 
+import core.exceptions.ClassNotInjectable;
 import core.exceptions.InterfaceNotImplemented;
 import core.exceptions.UnresolvableDependency;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface InjectorInterface {
 
-    Injector addDependency(Class c, Class o) throws InterfaceNotImplemented;
+    Injector addDependency(Class c, Class o) throws InterfaceNotImplemented, ClassNotInjectable;
 
     void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
 

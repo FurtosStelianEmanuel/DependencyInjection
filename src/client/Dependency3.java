@@ -5,12 +5,14 @@
  */
 package client;
 
+import annotations.Injectable;
 import interfaces.Interfaces;
 
 /**
  *
  * @author Manel
  */
+@Injectable
 public class Dependency3 implements Interfaces.Dependency3Interface {
 
     private final Interfaces.Dependency1Interface dep1;
