@@ -5,8 +5,8 @@
  */
 package client;
 
-import bananainjector.Injector;
-import bananainjector.InjectorInterface;
+import banana.Injector;
+import banana.InjectorInterface;
 import banana.exceptions.ClassNotInjectable;
 import banana.exceptions.InterfaceNotImplemented;
 import banana.exceptions.UnresolvableDependency;

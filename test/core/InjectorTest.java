@@ -5,8 +5,8 @@
  */
 package core;
 
-import bananainjector.InjectorInterface;
-import bananainjector.Injector;
+import banana.InjectorInterface;
+import banana.Injector;
 import annotations.Injectable;
 import banana.exceptions.ClassNotInjectable;
 import banana.exceptions.InterfaceNotImplemented;
