@@ -5,11 +5,11 @@
  */
 package client;
 
-import core.Injector;
-import core.InjectorInterface;
-import core.exceptions.ClassNotInjectable;
-import core.exceptions.InterfaceNotImplemented;
-import core.exceptions.UnresolvableDependency;
+import bananainjector.Injector;
+import bananainjector.InjectorInterface;
+import banana.exceptions.ClassNotInjectable;
+import banana.exceptions.InterfaceNotImplemented;
+import banana.exceptions.UnresolvableDependency;
 import interfaces.Interfaces;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;

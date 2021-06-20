@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package core;
+package bananainjector;
 
 import annotations.Injectable;
-import core.exceptions.ClassNotInjectable;
-import core.exceptions.InterfaceNotImplemented;
-import core.exceptions.UnresolvableDependency;
+import banana.exceptions.ClassNotInjectable;
+import banana.exceptions.InterfaceNotImplemented;
+import banana.exceptions.UnresolvableDependency;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

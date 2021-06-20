@@ -5,10 +5,12 @@
  */
 package core;
 
+import bananainjector.InjectorInterface;
+import bananainjector.Injector;
 import annotations.Injectable;
-import core.exceptions.ClassNotInjectable;
-import core.exceptions.InterfaceNotImplemented;
-import core.exceptions.UnresolvableDependency;
+import banana.exceptions.ClassNotInjectable;
+import banana.exceptions.InterfaceNotImplemented;
+import banana.exceptions.UnresolvableDependency;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,7 +123,7 @@ public class InjectorTest {
     
     /**
      *
-     * @throws core.exceptions.ClassNotInjectable
+     * @throws banana.exceptions.ClassNotInjectable
      */
     @Test
     public void testInjectorAddDependency_WhenClassDoesntImplementInterface_ThenExceptionThrown() throws ClassNotInjectable {

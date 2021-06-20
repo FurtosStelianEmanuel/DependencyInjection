@@ -2,22 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/core/exceptions/InterfaceNotImplemented.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/client/Driver.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/client/Dependency2.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/manifest.mf</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/build.xml</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/interfaces/Interfaces.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/core/exceptions/UnresolvableDependency.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/core/Injector.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/client/Dependency1.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/annotations/InjectionTarget.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/client/Formular.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/annotations/Injectable.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/client/Dependency3.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/test/core/InjectorTest.java</file>
-            <file>file:/C:/Users/Manel/Documents/NetBeansProjects/DependencyInjection/src/core/InjectorInterface.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
