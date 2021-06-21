@@ -47,14 +47,7 @@ public class Injector implements InjectorInterface {
 
     @Override
     public void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
-        final List<Class> sorted = new ArrayList<>();
-
-        skeletonPool.keySet().forEach((c) -> {
-            sorted.add(c);
-        });
-        Collections.sort(sorted, (c1, c2) -> getConstructorParameterCount(skeletonPool.get(c1)) - getConstructorParameterCount(skeletonPool.get(c2)));
-
-        for (Class skeletonInterface : sorted) {
+        for (Class skeletonInterface : skeletonPool.keySet()) {
             objectPool.put(skeletonInterface, resolve(skeletonInterface));
         }
     }
