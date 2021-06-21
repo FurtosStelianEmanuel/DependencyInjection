@@ -13,7 +13,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +24,12 @@ public class Injector implements InjectorInterface {
 
     private final Map<Class, Class> skeletonPool;
     private final Map<Class, Object> objectPool;
+    private final List<Class> sortedSkeleton;
 
-    public Injector(Map<Class, Class> skeletonPool, Map<Class, Object> objectPool) {
+    public Injector(Map<Class, Class> skeletonPool, Map<Class, Object> objectPool, List<Class> sortedSkeleton) {
         this.skeletonPool = skeletonPool;
         this.objectPool = objectPool;
+        this.sortedSkeleton = sortedSkeleton;
     }
 
     @Override
@@ -38,16 +39,17 @@ public class Injector implements InjectorInterface {
         if (!classImplementsInterface) {
             throw new InterfaceNotImplemented(String.format("%s doesn't implement interface %s", implementationClass.getName(), interfaceClass.getName()));
         }
-        if (!classIsInjectable){
+        if (!classIsInjectable) {
             throw new ClassNotInjectable(String.format("%s Is not injectable", implementationClass.getName()));
         }
+        sortedSkeleton.add(interfaceClass);
         skeletonPool.put(interfaceClass, implementationClass);
         return this;
     }
 
     @Override
     public void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
-        for (Class skeletonInterface : skeletonPool.keySet()) {
+        for (Class skeletonInterface : sortedSkeleton) {
             objectPool.put(skeletonInterface, resolve(skeletonInterface));
         }
     }
@@ -101,11 +103,11 @@ public class Injector implements InjectorInterface {
         return (T) constructor.newInstance(parameters);
     }
 
-    private boolean isInjectable(Class c){
+    private boolean isInjectable(Class c) {
         Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
         return injectableAnnotation != null;
     }
-    
+
     private boolean requiresNewInstance(Class c) {
         Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
         return injectableAnnotation != null ? injectableAnnotation.ResolveWithNewInstance() : false;

@@ -12,7 +12,9 @@ import banana.exceptions.ClassNotInjectable;
 import banana.exceptions.InterfaceNotImplemented;
 import banana.exceptions.UnresolvableDependency;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -27,13 +29,15 @@ public class InjectorTest {
     private final InjectorInterface injector;
     private final Map<Class, Class> skeletonPoolMock;
     private final Map<Class, Object> objectPoolMock;
-
+    private final List<Class> sortedSkeletonMock;
+    
     final String ExceptionShouldHaveBeenThrownMessage = "Exception should have been thrown";
 
     public InjectorTest() {
         skeletonPoolMock = Mockito.mock(Map.class, "SkeletonPoolMock");
         objectPoolMock = Mockito.mock(Map.class, "ObjectPoolMock");
-        injector = new Injector(skeletonPoolMock, objectPoolMock);
+        sortedSkeletonMock = Mockito.mock(List.class, "SortedSkeletonMock");
+        injector = new Injector(skeletonPoolMock, objectPoolMock, sortedSkeletonMock);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Injector test classes">
@@ -170,7 +174,9 @@ public class InjectorTest {
             }
         };
         
-        Injector instance = new Injector(skeleton, objectPoolMock);
+        List<Class> sortedSkeleton = Arrays.asList(i1,i2);
+        
+        Injector instance = new Injector(skeleton, objectPoolMock, sortedSkeleton);
         
         instance.initialise();
         
@@ -189,7 +195,9 @@ public class InjectorTest {
             }
         };
         
-        Injector instance = new Injector(skeleton, objectPoolMock);
+        List<Class> sortedSkeleton = Arrays.asList(i3);
+        
+        Injector instance = new Injector(skeleton, objectPoolMock, sortedSkeleton);
         
         try {
             instance.initialise();
