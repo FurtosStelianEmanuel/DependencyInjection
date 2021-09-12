@@ -36,7 +36,7 @@ public class Injector implements InjectorInterface {
     public Injector addDependency(Class interfaceClass, Class implementationClass) throws InterfaceNotImplemented, ClassNotInjectable {
         boolean classImplementsInterface = Arrays.asList(implementationClass.getInterfaces()).stream().filter(p -> p.getName().equals(interfaceClass.getName())).findAny().orElse(null) != null;
         boolean classIsInjectable = isInjectable(implementationClass);
-        if (!classImplementsInterface) {
+        if (interfaceClass != implementationClass && !classImplementsInterface) {
             throw new InterfaceNotImplemented(String.format("%s doesn't implement interface %s", implementationClass.getName(), interfaceClass.getName()));
         }
         if (!classIsInjectable) {
@@ -48,6 +48,12 @@ public class Injector implements InjectorInterface {
     }
 
     @Override
+    public Injector addDependency(Class skeletonInterface, Object implementation) throws InterfaceNotImplemented, ClassNotInjectable {
+        objectPool.put(skeletonInterface, implementation);
+        return this;
+    }
+
+    @Override
     public void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
         for (Class skeletonInterface : sortedSkeleton) {
             objectPool.put(skeletonInterface, resolve(skeletonInterface));
@@ -55,7 +61,7 @@ public class Injector implements InjectorInterface {
     }
 
     @Override
-    public <T> T resolveDependencies(Class classToResolve) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
+    public <T> T resolveDependencies(Class<T> classToResolve) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
         boolean requiresNewInstance = requiresNewInstance(classToResolve);
         if (!requiresNewInstance) {
             for (Class c : objectPool.keySet()) {
@@ -111,9 +117,5 @@ public class Injector implements InjectorInterface {
     private boolean requiresNewInstance(Class c) {
         Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
         return injectableAnnotation != null ? injectableAnnotation.ResolveWithNewInstance() : false;
-    }
-
-    private int getConstructorParameterCount(Class c) {
-        return c.getConstructors()[0].getParameterCount();
     }
 }

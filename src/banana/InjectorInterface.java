@@ -18,7 +18,9 @@ public interface InjectorInterface {
 
     Injector addDependency(Class c, Class o) throws InterfaceNotImplemented, ClassNotInjectable;
 
+    Injector addDependency(Class c, Object implementation) throws InterfaceNotImplemented, ClassNotInjectable;
+    
     void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
 
-    <T> T resolveDependencies(Class c) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
+    <T> T resolveDependencies(Class<T> c) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
 }
