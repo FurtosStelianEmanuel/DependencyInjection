@@ -36,7 +36,7 @@ public class Injector implements InjectorInterface {
     public Injector addDependency(Class interfaceClass, Class implementationClass) throws InterfaceNotImplemented, ClassNotInjectable {
         boolean classImplementsInterface = Arrays.asList(implementationClass.getInterfaces()).stream().filter(p -> p.getName().equals(interfaceClass.getName())).findAny().orElse(null) != null;
         boolean classIsInjectable = isInjectable(implementationClass);
-        if (interfaceClass != implementationClass && !classImplementsInterface) {
+        if (interfaceClass.isInterface() && interfaceClass != implementationClass && !classImplementsInterface) {
             throw new InterfaceNotImplemented(String.format("%s doesn't implement interface %s", implementationClass.getName(), interfaceClass.getName()));
         }
         if (!classIsInjectable) {
