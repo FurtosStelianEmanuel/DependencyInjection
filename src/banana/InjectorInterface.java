@@ -22,5 +22,5 @@ public interface InjectorInterface {
     
     void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
 
-    <T> T resolveDependencies(Class<T> c) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency;
+    <T> T resolveDependencies(Class<T> c);
 }

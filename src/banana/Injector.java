@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -61,7 +63,7 @@ public class Injector implements InjectorInterface {
     }
 
     @Override
-    public <T> T resolveDependencies(Class<T> classToResolve) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
+    public <T> T resolveDependencies(Class<T> classToResolve) {
         boolean requiresNewInstance = requiresNewInstance(classToResolve);
         if (!requiresNewInstance) {
             for (Class c : objectPool.keySet()) {
@@ -76,14 +78,23 @@ public class Injector implements InjectorInterface {
             if (objectPool.containsKey(c)) {
                 resolvedDependencies.add(objectPool.get(c));
             } else {
-                throw new UnresolvableDependency(c.getName(), classToResolve.getName());
+                return null;
             }
         }
-        T instance = (T) constructors[0].newInstance(resolvedDependencies.toArray());
-        if (!requiresNewInstance) {
-            objectPool.put(classToResolve, instance);
+
+        T instance;
+        try {
+            instance = (T) constructors[0].newInstance(resolvedDependencies.toArray());
+            if (!requiresNewInstance) {
+                objectPool.put(classToResolve, instance);
+            }
+
+            return instance;
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(Injector.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return instance;
+
+        return null;
     }
 
     private Object[] resolveAll(Class[] classes) {
