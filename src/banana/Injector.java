@@ -97,6 +97,11 @@ public class Injector implements InjectorInterface {
         return null;
     }
 
+    @Override
+    public void hotwireDependency(Class dependency, Object implementation) {
+        objectPool.put(dependency, implementation);
+    }
+
     private Object[] resolveAll(Class[] classes) {
         List<Object> resolvedObjects = new ArrayList<>();
         for (Class c : classes) {

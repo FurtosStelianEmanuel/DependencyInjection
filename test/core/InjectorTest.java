@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -120,7 +123,7 @@ public class InjectorTest {
     public void testInjectorAddDependency_Success() throws Exception {
         Injector result = injector.addDependency(Dependency1Interface.class, Dependency1.class);
 
-        Mockito.verify(skeletonPoolMock, Mockito.times(1)).put(Dependency1Interface.class, Dependency1.class);
+        verify(skeletonPoolMock, Mockito.times(1)).put(Dependency1Interface.class, Dependency1.class);
         assertEquals(injector, result);
     }
 
@@ -180,8 +183,8 @@ public class InjectorTest {
 
         instance.initialise();
 
-        Mockito.verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency1Interface.class), Mockito.any(Dependency1.class));
-        Mockito.verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency2Interface.class), Mockito.any(Dependency2.class));
+        verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency1Interface.class), any(Dependency1.class));
+        verify(objectPoolMock, Mockito.times(1)).put(Mockito.eq(Dependency2Interface.class), any(Dependency2.class));
     }
 
     @Test
@@ -222,8 +225,18 @@ public class InjectorTest {
     }
 
     @Test
-    public void testInjectorResolveDependencies_WhenUnresolvableDependency_ThenExceptionThrown() {
+    public void testInjectorResolveDependencies_WhenUnresolvableDependency_ThenNullReturned() {
         assertNull(injector.resolveDependencies(Dependency3.class));
     }
 //</editor-fold>
+
+    //<editor-fold desc="Injector hotwireDependency" defaultstate="collapsed">
+    @Test
+    public void hotwireDependencySuccess() {
+        Object testObject = new Object();
+        injector.hotwireDependency(Class.class, testObject);
+
+        verify(objectPoolMock).put(Class.class, testObject);
+    }
+    //</editor-fold>
 }
