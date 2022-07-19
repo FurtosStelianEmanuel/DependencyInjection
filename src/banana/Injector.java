@@ -71,31 +71,6 @@ public class Injector implements InjectorInterface {
         initialiseUnmanagedDependencyGraph(unresolvedClasses);
     }
 
-    private void initialiseUnmanagedDependencyGraph(List<Class> unresolvedClasses) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
-        boolean atLeastOneClassResolved = false;
-        for (int i = unresolvedClasses.size() - 1; i >= 0; i--) {
-            if (i >= unresolvedClasses.size()) {
-                continue;
-            }
-
-            Class skeletonInterface = unresolvedClasses.get(i);
-            try {
-                objectPool.put(skeletonInterface, resolve(skeletonInterface));
-                unresolvedClasses.remove(skeletonInterface);
-                atLeastOneClassResolved = true;
-            } catch (UnresolvableDependency ex) {
-            }
-        }
-
-        if (!unresolvedClasses.isEmpty()) {
-            if (atLeastOneClassResolved) {
-                initialiseUnmanagedDependencyGraph(unresolvedClasses);
-            } else {
-                throw new UnresolvableDependency(unresolvedClasses.stream().map(c -> c.getName()).collect(Collectors.toList()));
-            }
-        }
-    }
-
     @Override
     public <T> T resolveDependencies(Class<T> classToResolve) {
         boolean requiresNewInstance = requiresNewInstance(classToResolve);
@@ -167,5 +142,30 @@ public class Injector implements InjectorInterface {
     private boolean requiresNewInstance(Class c) {
         Injectable injectableAnnotation = (Injectable) c.getAnnotation(Injectable.class);
         return injectableAnnotation != null ? injectableAnnotation.ResolveWithNewInstance() : false;
+    }
+
+    private void initialiseUnmanagedDependencyGraph(List<Class> unresolvedClasses) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
+        boolean atLeastOneClassResolved = false;
+        for (int i = unresolvedClasses.size() - 1; i >= 0; i--) {
+            if (i >= unresolvedClasses.size()) {
+                continue;
+            }
+
+            Class skeletonInterface = unresolvedClasses.get(i);
+            try {
+                objectPool.put(skeletonInterface, resolve(skeletonInterface));
+                unresolvedClasses.remove(skeletonInterface);
+                atLeastOneClassResolved = true;
+            } catch (UnresolvableDependency ex) {
+            }
+        }
+
+        if (!unresolvedClasses.isEmpty()) {
+            if (atLeastOneClassResolved) {
+                initialiseUnmanagedDependencyGraph(unresolvedClasses);
+            } else {
+                throw new UnresolvableDependency(unresolvedClasses.stream().map(c -> c.getName()).collect(Collectors.toList()));
+            }
+        }
     }
 }
