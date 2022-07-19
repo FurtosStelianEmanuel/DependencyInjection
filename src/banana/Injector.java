@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -57,8 +58,41 @@ public class Injector implements InjectorInterface {
 
     @Override
     public void initialise() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
+        List<Class> unresolvedClasses = new ArrayList();
+
         for (Class skeletonInterface : sortedSkeleton) {
-            objectPool.put(skeletonInterface, resolve(skeletonInterface));
+            try {
+                objectPool.put(skeletonInterface, resolve(skeletonInterface));
+            } catch (UnresolvableDependency ex) {
+                unresolvedClasses.add(skeletonInterface);
+            }
+        }
+
+        initialiseUnmanagedDependencyGraph(unresolvedClasses);
+    }
+
+    private void initialiseUnmanagedDependencyGraph(List<Class> unresolvedClasses) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, UnresolvableDependency {
+        boolean atLeastOneClassResolved = false;
+        for (int i = unresolvedClasses.size() - 1; i >= 0; i--) {
+            if (i >= unresolvedClasses.size()) {
+                continue;
+            }
+
+            Class skeletonInterface = unresolvedClasses.get(i);
+            try {
+                objectPool.put(skeletonInterface, resolve(skeletonInterface));
+                unresolvedClasses.remove(skeletonInterface);
+                atLeastOneClassResolved = true;
+            } catch (UnresolvableDependency ex) {
+            }
+        }
+
+        if (!unresolvedClasses.isEmpty()) {
+            if (atLeastOneClassResolved) {
+                initialiseUnmanagedDependencyGraph(unresolvedClasses);
+            } else {
+                throw new UnresolvableDependency(unresolvedClasses.stream().map(c -> c.getName()).collect(Collectors.toList()));
+            }
         }
     }
 

@@ -5,6 +5,8 @@
  */
 package banana.exceptions;
 
+import java.util.List;
+
 /**
  *
  * @author Manel
@@ -17,6 +19,10 @@ public class UnresolvableDependency extends Exception {
 
     public UnresolvableDependency(String nameOfClass) {
         super(String.format("%s couldn't be resolved", nameOfClass));
+    }
+
+    public UnresolvableDependency(List<String> namesOfClasses) {
+        super(String.format("%s couldn't be resolved", String.join(",", namesOfClasses)));
     }
 
     public UnresolvableDependency(String c1, String c2) {
